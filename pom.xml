@@ -17,8 +17,8 @@ specific language governing permissions and limitations
 under the License.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.dataartisans</groupId>
@@ -60,11 +60,11 @@ under the License.
 
 	</dependencies>
 
-	<!-- We use the maven-assembly plugin to create a fat jar that contains all dependencies
-		except flink and it's transitive dependencies. The resulting fat-jar can be executed
-		on a cluster. Change the value of Program-Class if your program entry point changes. -->
 	<build>
 		<plugins>
+			<!-- We use the maven-assembly plugin to create a fat jar that contains all dependencies
+			except flink and it's transitive dependencies. The resulting fat-jar can be executed
+			on a cluster. Change the value of Program-Class if your program entry point changes. -->
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.4.1</version>
@@ -73,9 +73,9 @@ under the License.
 						<descriptor>src/assembly/flink-fat-jar.xml</descriptor>
 					</descriptors>
 					<archive>
-						<manifestEntries>
-							<Program-Class>com.dataartisans.Job</Program-Class>
-						</manifestEntries>
+						<manifest>
+							<mainClass>com.dataartisans.BeerAnalysisJava</mainClass>
+						</manifest>
 					</archive>
 				</configuration>
 				<executions>
@@ -88,14 +88,27 @@ under the License.
 					</execution>
 				</executions>
 			</plugin>
+			
+			<!-- Configure the jar plugin to add the main class as a manifest entry -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifestEntries>
+							<Main-Class>com.dataartisans.BeerAnalysisJava</Main-Class>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.1</version>
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
+					<source>1.7</source>
+					<target>1.7</target>
 				</configuration>
 			</plugin>
 			<plugin>
