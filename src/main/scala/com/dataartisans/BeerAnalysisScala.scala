@@ -9,7 +9,7 @@ object BeerAnalysisScala {
     env.setDegreeOfParallelism(1)
 
     val beers = env.readCsvFile[Beer](
-      "/Users/aljoscha/Dev/beer-analysis/beeradvocate.csv.sample",
+      "/home/flink/beer-analysis/beerdata.csv.sample",
       lineDelimiter = "\n",
       fieldDelimiter = '|',
       ignoreFirstLine = true)

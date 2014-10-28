@@ -32,7 +32,7 @@ public class BeerAnalysisJava {
 
 		DataSet<Tuple11<String, Integer, Integer, Float, String,
 				Float, Float, Float, Float, Float, Long>> input = env.readCsvFile(
-			"/Users/aljoscha/Dev/beer-analysis/beeradvocate.csv.sample")
+			"/home/flink/beer-analysis/beerdata.csv.sample")
 			.fieldDelimiter('|').lineDelimiter("\n").ignoreFirstLine()
 			.types(String.class, Integer.class, Integer.class, Float.class, String.class,
 					Float.class, Float.class, Float.class, Float.class, Float.class, Long.class);
