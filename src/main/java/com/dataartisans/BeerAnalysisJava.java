@@ -18,11 +18,17 @@
 package com.dataartisans;
 
 import org.apache.flink.api.common.functions.FilterFunction;
+import org.apache.flink.api.common.functions.GroupReduceFunction;
 import org.apache.flink.api.common.functions.MapFunction;
+import org.apache.flink.api.common.operators.Order;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.tuple.Tuple11;
 import org.apache.flink.api.java.tuple.Tuple3;
+import org.apache.flink.api.java.tuple.Tuple4;
+import org.apache.flink.util.Collector;
+
+import java.util.Iterator;
 
 
 public class BeerAnalysisJava {
@@ -32,41 +38,13 @@ public class BeerAnalysisJava {
 
 		DataSet<Tuple11<String, Integer, Integer, Float, String,
 				Float, Float, Float, Float, Float, Long>> input = env.readCsvFile(
-			"/home/flink/beer-analysis/beerdata.csv.sample")
+			"/Users/aljoscha/Dev/beer-analysis/beerdata.csv")
 			.fieldDelimiter('|').lineDelimiter("\n").ignoreFirstLine()
 			.types(String.class, Integer.class, Integer.class, Float.class, String.class,
 					Float.class, Float.class, Float.class, Float.class, Float.class, Long.class);
 
 		DataSet<Beer> beers = parseInput(input);
 
-		DataSet<Tuple3<String, Float, Long>> averageWithCount = beers
-			.map(new MapFunction<Beer, Tuple3<String, Float, Long>>() {
-				@Override
-				public Tuple3<String, Float, Long> map(Beer beer) throws Exception {
-					return new Tuple3<>(beer.name, beer.overall, 1l);
-				}
-			})
-			.groupBy(0)
-			.sum(1).andSum(2)
-			.map(new MapFunction<Tuple3<String, Float, Long>, Tuple3<String, Float, Long>>() {
-				@Override
-				public Tuple3<String, Float, Long> map(
-						Tuple3<String, Float, Long> in) throws
-						Exception {
-					in.f1 = in.f1 / in.f2;
-					return in;
-				}
-			});
-//		averageWithCount.print();
-
-
-		averageWithCount.filter(new FilterFunction<Tuple3<String, Float, Long>>() {
-			@Override
-			public boolean filter(Tuple3<String, Float, Long> in) throws
-					Exception {
-				return in.f0.toLowerCase().contains("augustiner");
-			}
-		}).print();
 
 
 		env.execute("Beer Analytics");
@@ -78,7 +56,6 @@ public class BeerAnalysisJava {
 				Float, Float, Float, Float, Float, Long>, Beer>() {
 			public Beer map(Tuple11<String, Integer, Integer, Float, String,
 					Float, Float, Float, Float, Float, Long> in) throws Exception {
-
 
 				return new Beer(in.f0, in.f1, in.f2, in.f3, in.f4, in.f5, in.f6, in.f7, in.f8,
 						in.f9, in.f10);
@@ -121,37 +98,6 @@ public class BeerAnalysisJava {
 		public String toString() {
 			return "Beer(" + name + "," + beerId + "," + brewerId + "," + ABV + "," + style + ","
 					+ appearance + "," + aroma + "," + palate + "," + taste + "," + overall + ")";
-		}
-	}
-
-	public static class Review {
-		public Review(float appearance, float aroma, float palate, float taste, float overall,
-		              long time, String profileName, String text) {
-			this.appearance = appearance;
-			this.aroma = aroma;
-			this.palate = palate;
-			this.taste = taste;
-			this.overall = overall;
-			this.time = time;
-			this.profileName = profileName;
-			this.text = text;
-		}
-
-		public Review() {}
-
-		public float appearance;
-		public float aroma;
-		public float palate;
-		public float taste;
-		public float overall;
-		public long time;
-		public String profileName;
-		public String text;
-
-		@Override
-		public String toString() {
-			return "Review(" + appearance + "," + aroma + "," + palate + "," + taste + "," +
-					overall + "," + time + ")";
 		}
 	}
 }
