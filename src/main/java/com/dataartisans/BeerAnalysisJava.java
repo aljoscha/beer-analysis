@@ -60,15 +60,6 @@ public class BeerAnalysisJava {
 //		averageWithCount.print();
 
 
-		averageWithCount.filter(new FilterFunction<Tuple3<String, Float, Long>>() {
-			@Override
-			public boolean filter(Tuple3<String, Float, Long> in) throws
-					Exception {
-				return in.f0.toLowerCase().contains("augustiner");
-			}
-		}).print();
-
-
 		env.execute("Beer Analytics");
 	}
 
@@ -121,37 +112,6 @@ public class BeerAnalysisJava {
 		public String toString() {
 			return "Beer(" + name + "," + beerId + "," + brewerId + "," + ABV + "," + style + ","
 					+ appearance + "," + aroma + "," + palate + "," + taste + "," + overall + ")";
-		}
-	}
-
-	public static class Review {
-		public Review(float appearance, float aroma, float palate, float taste, float overall,
-		              long time, String profileName, String text) {
-			this.appearance = appearance;
-			this.aroma = aroma;
-			this.palate = palate;
-			this.taste = taste;
-			this.overall = overall;
-			this.time = time;
-			this.profileName = profileName;
-			this.text = text;
-		}
-
-		public Review() {}
-
-		public float appearance;
-		public float aroma;
-		public float palate;
-		public float taste;
-		public float overall;
-		public long time;
-		public String profileName;
-		public String text;
-
-		@Override
-		public String toString() {
-			return "Review(" + appearance + "," + aroma + "," + palate + "," + taste + "," +
-					overall + "," + time + ")";
 		}
 	}
 }

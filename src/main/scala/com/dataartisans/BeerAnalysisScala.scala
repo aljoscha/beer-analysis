@@ -20,9 +20,6 @@ object BeerAnalysisScala {
       .sum("_2").andSum("_3")
       .map { in => (in._1, in._2 / in._3, in._3)}
 
-    averageWithCount
-      .filter(_._1.toLowerCase.contains("augustiner"))
-      .print()
 
     // execute program
     env.execute("Beer Analysis")
