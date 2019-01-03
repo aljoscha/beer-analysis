@@ -23,6 +23,7 @@ import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.operators.Order;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
+import org.apache.flink.api.java.aggregation.Aggregations;
 import org.apache.flink.api.java.tuple.Tuple11;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.api.java.tuple.Tuple4;
@@ -45,7 +46,42 @@ public class BeerAnalysisJava {
 
 		DataSet<Beer> beers = parseInput(input);
 
+//		DataSet<Tuple3<String, Float, Integer>> beerTuples =
+				beers.filter( new FilterFunction<Beer>() {
 
+					public boolean filter(Beer beer) throws Exception {
+						return beer.style.toLowerCase().contains("pils");
+					}
+
+				})
+				.map( new MapFunction<Beer, Tuple3<Beer, Float, Integer>>() {
+
+					public Tuple3<Beer, Float, Integer> map(Beer beer) throws Exception {
+						return new Tuple3<>(beer, beer.overall, 1);
+					}
+
+				})
+				.groupBy("f0.name")
+				.sum(1).andSum(2)
+				.map(new MapFunction<Tuple3<Beer, Float, Integer>, Tuple4<Beer, Float,
+						Integer, Integer>>() {
+
+					public Tuple4<Beer, Float, Integer, Integer> map(Tuple3<Beer, Float,
+							Integer> in) throws Exception {
+						return new Tuple4<>(in.f0, in.f1 / in.f2, in.f2, 1);
+					}
+				})
+				.filter(new FilterFunction<Tuple4<Beer, Float, Integer, Integer>>() {
+					@Override
+					public boolean filter(Tuple4<Beer, Float, Integer,
+							Integer> in) throws Exception {
+						return in.f2 > 10;
+					}
+				})
+				.groupBy(3)
+				.sortGroup(1, Order.DESCENDING)
+				.first(10)
+				.print();
 
 		env.execute("Beer Analytics");
 	}

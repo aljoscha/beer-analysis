@@ -9,11 +9,16 @@ object BeerAnalysisScala {
     val env = ExecutionEnvironment.getExecutionEnvironment
     env.setDegreeOfParallelism(1)
 
-    val beers = env.readCsvFile[Beer](
+    val beers = env.readCsvFile[Beer2](
       "/Users/aljoscha/Dev/beer-analysis/beerdata.csv",
       lineDelimiter = "\n",
       fieldDelimiter = '|',
       ignoreFirstLine = true)
+
+    beers
+      .filter { in => in.name.toLowerCase.contains("augustiner")}
+      .distinct("name")
+      .print()
 
 
     // execute program

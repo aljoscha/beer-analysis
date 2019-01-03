@@ -9,7 +9,7 @@ object BeerAnalysisScalaSolutions {
     val env = ExecutionEnvironment.getExecutionEnvironment
     env.setDegreeOfParallelism(1)
 
-    val beers = env.readCsvFile[Beer](
+    val beers = env.readCsvFile[Beer2](
       "/Users/aljoscha/Dev/beer-analysis/beerdata.csv",
       lineDelimiter = "\n",
       fieldDelimiter = '|',
@@ -82,7 +82,7 @@ object BeerAnalysisScalaSolutions {
 
 }
 
-case class Beer(
+case class Beer2(
     name: String,
     beerId: Int,
     brewerId: Int,
